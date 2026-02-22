@@ -1,0 +1,37 @@
+# hparams/EMMET/llama-3-8b.yaml
+
+# Model specification
+model_name: "meta-llama/Meta-Llama-3-8B-Instruct"
+model_class: AutoModelForCausalLM
+tokenizer_class: AutoTokenizer
+tokenizer_name: "meta-llama/Meta-Llama-3-8B-Instruct"
+
+# Target layer for Llama-3-8B (Based on paper: layer 1 yields the best outcomes)
+layers: [1]
+
+# Editing hyperparameters
+v_num_grad_steps: 25
+v_lr: 5e-1
+v_loss_layer: 31          # Calculate loss at the final layer
+v_weight_decay: 1e-3
+clamp_norm_factor: 4
+kl_factor: 0.0625
+mom2_adjustment: true
+mom2_update_weight: 100000
+
+# Optimization structure
+rewrite_module_tmp: "model.layers.{}.mlp.down_proj"
+layer_module_tmp: "model.layers.{}"
+mlp_module_tmp: "model.layers.{}.mlp"
+attn_module_tmp: "model.layers.{}.self_attn"
+ln_f_module: "model.norm"
+lm_head_module: "lm_head"
+
+# Sequential editing settings (Crucial for preventing model collapse)
+mom2_dataset: "wikipedia"
+mom2_n_samples: 100000
+mom2_dtype: "float32"
+batch_size: 1             # Strict sequential editing
+
+# Maximum input length supported by EasyEdit
+max_length: 512
